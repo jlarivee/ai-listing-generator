@@ -549,15 +549,18 @@ Make ready to copy/paste.`;
                 const data = await response.json();
                 const content = data.content[0].text;
                 
-                // Parse sections
-                const ebayMatch = content.match(/\*\*EBAY LISTING:\*\*(.*?)(?=\*\*CRAIGSLIST|\*\*FACEBOOK|$)/s);
-                const craigslistMatch = content.match(/\*\*CRAIGSLIST LISTING:\*\*(.*?)(?=\*\*FACEBOOK|PRICING|$)/s);
-                const facebookMatch = content.match(/\*\*FACEBOOK MARKETPLACE:\*\*(.*?)(?=PRICING|$)/s);
+                // Debug: log the raw response
+                console.log('Claude response:', content);
+                
+                // Parse sections - more flexible matching
+                const ebayMatch = content.match(/\*\*EBAY[^:]*:\*\*(.*?)(?=\*\*(?:CRAIGSLIST|FACEBOOK|PRICING)|$)/s);
+                const craigslistMatch = content.match(/\*\*CRAIGSLIST[^:]*:\*\*(.*?)(?=\*\*(?:FACEBOOK|PRICING)|$)/s);
+                const facebookMatch = content.match(/\*\*FACEBOOK[^:]*:\*\*(.*?)(?=\*\*?PRICING|$)/s);
                 
                 listings = {
-                    ebay: ebayMatch ? ebayMatch[1].trim() : 'eBay section not found',
-                    craigslist: craigslistMatch ? craigslistMatch[1].trim() : 'Craigslist section not found',
-                    facebook: facebookMatch ? facebookMatch[1].trim() : 'Facebook section not found'
+                    ebay: ebayMatch ? ebayMatch[1].trim() : (content.includes('EBAY') ? content : 'eBay section not found'),
+                    craigslist: craigslistMatch ? craigslistMatch[1].trim() : (content.includes('CRAIGSLIST') ? content : 'Craigslist section not found'),
+                    facebook: facebookMatch ? facebookMatch[1].trim() : (content.includes('FACEBOOK') ? content : 'Facebook section not found')
                 };
                 
                 // Update current view
