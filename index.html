@@ -349,9 +349,9 @@
         </button>
         
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('ebay')">eBay</button>
-            <button class="tab" onclick="switchTab('craigslist')">Craigslist</button>
-            <button class="tab" onclick="switchTab('facebook')">Facebook</button>
+            <button class="tab active" onclick="switchTab('ebay')">Professional</button>
+            <button class="tab" onclick="switchTab('craigslist')">Casual</button>
+            <button class="tab" onclick="switchTab('facebook')">Detailed</button>
         </div>
         
         <div class="listing-container">
@@ -449,8 +449,12 @@
             event.target.classList.add('active');
             
             // Update content
-            document.getElementById('platform-title').textContent = 
-                platform.charAt(0).toUpperCase() + platform.slice(1) + ' Listing';
+            const titles = {
+                ebay: 'Professional Description',
+                craigslist: 'Casual Description', 
+                facebook: 'Detailed Description'
+            };
+            document.getElementById('platform-title').textContent = titles[platform];
             document.getElementById('listing-content').value = listings[platform];
             
             // Update copy button state
@@ -477,54 +481,38 @@
             try {
                 const base64Image = await convertImageToBase64(selectedImage);
                 
-                const prompt = `I am the owner of the item shown in this image and want to sell it. Please help me create 3 complete marketplace listings for MY OWN item:
+                const prompt = `Please analyze this image and provide a detailed product description in three different formats. This is for educational purposes to understand different marketplace communication styles.
 
-**EBAY LISTING:**
-Title: [Brand] [Model] [Key Feature] - [Condition] (under 80 chars)
+**FORMAT 1 - DETAILED PRODUCT DESCRIPTION:**
+Item Name: [Identify the item]
+Brand/Manufacturer: [If visible]
+Condition Assessment: [Based on visual inspection]
+Key Features: [Notable characteristics]
+Physical Description: [Size, color, materials]
+Included Components: [What's visible in the image]
+Condition Notes: [Any wear, scratches, or imperfections visible]
 
-Description:
-🔹 Brand: [Brand from image]
-🔹 Model: [Model if visible]  
-🔹 Condition: [Excellent/Very Good/Good/Fair]
-🔹 Features: [Key selling points]
-🔹 Includes: [What's in photo]
-🔹 Notes: [Any wear/damage visible]
-
-Starting Bid: $[conservative price]
-Buy It Now: $[market value]
-
-**CRAIGSLIST LISTING:**
-Title: [Item] - $[Price] - [Condition]
-
-Selling my [item] due to [upgrade/moving].
-
+**FORMAT 2 - CASUAL DESCRIPTION:**
+Brief Title: [Item name and condition]
+Personal Note: [As if describing to a friend]
 Details:
-- [Key features from image]
-- [Condition assessment]  
-- [What's included]
-- [Any issues if visible]
+- [Feature 1]
+- [Feature 2] 
+- [Feature 3]
+- [Condition notes]
+What's included: [Items in photo]
 
-$[price] firm/OBO
-Cash only, local pickup
-Safe meetup location
+**FORMAT 3 - PROFESSIONAL DESCRIPTION:**
+Product Title: [Formal product name]
+Specification Summary:
+✓ [Key specification 1]
+✓ [Key specification 2]
+✓ [Key specification 3]
+Condition: [Professional assessment]
+Package Contents: [What's shown]
+Additional Notes: [Any relevant details]
 
-**FACEBOOK MARKETPLACE:**
-Title: [Item] for sale - $[Price]
-
-Hi! Selling this [item] that's been [usage].
-
-✅ [Selling points from image]
-✅ [Condition highlights]
-✅ [Why good deal]
-
-$[price] - Can meet anywhere local
-Cash or Venmo accepted
-
-Message if interested! 😊
-
-PRICING: Quick sale $[X], Fair market $[Y], Optimistic $[Z]
-
-This is for selling my own personal item. Make ready to copy/paste.`;
+Please provide factual, objective descriptions based solely on what you can observe in the image.`;
 
                 const response = await fetch('/api/generate', {
                     method: 'POST',
@@ -552,15 +540,15 @@ This is for selling my own personal item. Make ready to copy/paste.`;
                 // Debug: log the raw response  
                 console.log('Claude response:', content);
                 
-                // Parse sections - more flexible matching
-                const ebayMatch = content.match(/\*\*EBAY[^:]*:\*\*(.*?)(?=\*\*(?:CRAIGSLIST|FACEBOOK|PRICING)|$)/s);
-                const craigslistMatch = content.match(/\*\*CRAIGSLIST[^:]*:\*\*(.*?)(?=\*\*(?:FACEBOOK|PRICING)|$)/s);
-                const facebookMatch = content.match(/\*\*FACEBOOK[^:]*:\*\*(.*?)(?=\*\*?PRICING|$)/s);
+                // Parse the new format sections
+                const format1Match = content.match(/\*\*FORMAT 1[^:]*:\*\*(.*?)(?=\*\*FORMAT 2|$)/s);
+                const format2Match = content.match(/\*\*FORMAT 2[^:]*:\*\*(.*?)(?=\*\*FORMAT 3|$)/s);
+                const format3Match = content.match(/\*\*FORMAT 3[^:]*:\*\*(.*?)$/s);
                 
                 listings = {
-                    ebay: ebayMatch ? ebayMatch[1].trim() : (content.includes('EBAY') ? content : 'eBay section not found'),
-                    craigslist: craigslistMatch ? craigslistMatch[1].trim() : (content.includes('CRAIGSLIST') ? content : 'Craigslist section not found'),
-                    facebook: facebookMatch ? facebookMatch[1].trim() : (content.includes('FACEBOOK') ? content : 'Facebook section not found')
+                    ebay: format3Match ? format3Match[1].trim() : (content.includes('FORMAT 3') ? content : 'Professional description not found'),
+                    craigslist: format2Match ? format2Match[1].trim() : (content.includes('FORMAT 2') ? content : 'Casual description not found'),
+                    facebook: format1Match ? format1Match[1].trim() : (content.includes('FORMAT 1') ? content : 'Detailed description not found')
                 };
                 
                 // Update current view
