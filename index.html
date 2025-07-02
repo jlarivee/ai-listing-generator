@@ -452,9 +452,9 @@
             const file = event.target.files[0];
             if (!file) return;
             
-            if (file.size > 5 * 1024 * 1024) {
-                showError('Image must be under 5MB');
-                return;
+            // Show compression message for large files
+            if (file.size > 2 * 1024 * 1024) {
+                showSuccess('Large image detected - compressing for optimal processing...');
             }
             
             selectedImage = file;
@@ -511,7 +511,9 @@
             btn.innerHTML = '<div class="spinner"></div> Analyzing Image...';
             
             try {
+                console.log('Original file size:', selectedImage.size, 'bytes');
                 const base64Image = await convertImageToBase64(selectedImage);
+                console.log('Compressed base64 size:', base64Image.length, 'characters');
                 
                 const prompt = `Please analyze this image and provide a detailed product description in three different formats. This is for educational purposes to understand different marketplace communication styles.
 
@@ -617,10 +619,54 @@ Please provide factual, objective descriptions based solely on what you can obse
         
         function convertImageToBase64(file) {
             return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result.split(',')[1]);
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
+                // First compress the image if it's too large
+                compressImage(file, 1024, 1024, 0.8).then(compressedFile => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result.split(',')[1]);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(compressedFile);
+                }).catch(reject);
+            });
+        }
+        
+        function compressImage(file, maxWidth, maxHeight, quality) {
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                
+                img.onload = function() {
+                    // Calculate new dimensions
+                    let { width, height } = img;
+                    
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height = (height * maxWidth) / width;
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxHeight) {
+                            width = (width * maxHeight) / height;
+                            height = maxHeight;
+                        }
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    // Draw and compress
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    canvas.toBlob((blob) => {
+                        const compressedFile = new File([blob], file.name, {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        });
+                        resolve(compressedFile);
+                    }, 'image/jpeg', quality);
+                };
+                
+                img.src = URL.createObjectURL(file);
             });
         }
         
