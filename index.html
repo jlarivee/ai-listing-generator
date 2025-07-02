@@ -526,30 +526,18 @@ PRICING: Quick sale $[X], Fair market $[Y], Optimistic $[Z]
 
 Make ready to copy/paste.`;
 
-                const response = await fetch('https://api.anthropic.com/v1/messages', {
+                const response = await fetch('/api/generate', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': apiKey,
-                        'anthropic-version': '2023-06-01'
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        model: 'claude-3-sonnet-20240229',
-                        max_tokens: 3000,
-                        messages: [{
-                            role: 'user',
-                            content: [{
-                                type: 'image',
-                                source: {
-                                    type: 'base64',
-                                    media_type: selectedImage.type,
-                                    data: base64Image
-                                }
-                            }, {
-                                type: 'text',
-                                text: prompt
-                            }]
-                        }]
+                        apiKey: apiKey,
+                        image: {
+                            type: selectedImage.type,
+                            data: base64Image
+                        },
+                        prompt: prompt
                     })
                 });
 
