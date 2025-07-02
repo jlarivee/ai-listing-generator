@@ -356,16 +356,41 @@
         
         <div class="listing-container">
             <div class="listing-header">
-                <h3 id="platform-title">eBay Listing</h3>
-                <button class="copy-btn" id="copy-btn" onclick="copyToClipboard()" disabled>
+                <h3 id="platform-title">Professional Description</h3>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="copy-btn" id="save-btn" onclick="saveCurrentItem()" disabled>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17,21 17,13 7,13 7,21"></polyline>
+                            <polyline points="7,3 7,8 15,8"></polyline>
+                        </svg>
+                        Save
+                    </button>
+                    <button class="copy-btn" id="copy-btn" onclick="copyToClipboard()" disabled>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+            </div>
+            <textarea id="listing-content" class="listing-content" placeholder="Generated descriptions will appear here..."></textarea>
+        </div>
+        
+        <div class="listing-container" style="margin-top: 1rem;">
+            <div class="listing-header">
+                <h3>📁 Saved Items</h3>
+                <button class="copy-btn" onclick="toggleSavedItems()">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        <polyline points="6,9 12,15 18,9"></polyline>
                     </svg>
-                    Copy
+                    View
                 </button>
             </div>
-            <textarea id="listing-content" class="listing-content" placeholder="Generated listing will appear here..."></textarea>
+            <div id="saved-items-list" style="display: none; max-height: 300px; overflow-y: auto;">
+                <!-- Saved items will be populated here -->
+            </div>
         </div>
         
         <button class="camera-btn" onclick="triggerCamera()" title="Take Photo">
@@ -380,6 +405,7 @@
         let selectedImage = null;
         let currentPlatform = 'ebay';
         let listings = { ebay: '', craigslist: '', facebook: '' };
+        let savedItems = JSON.parse(localStorage.getItem('savedItems') || '[]');
         
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -554,8 +580,9 @@ Please provide factual, objective descriptions based solely on what you can obse
                 // Update current view
                 document.getElementById('listing-content').value = listings[currentPlatform];
                 document.getElementById('copy-btn').disabled = false;
+                document.getElementById('save-btn').disabled = false;
                 
-                showSuccess('Listings generated! 🎉');
+                showSuccess('Descriptions generated! 🎉');
                 
             } catch (error) {
                 showError('Error: ' + error.message);
@@ -608,6 +635,108 @@ Please provide factual, objective descriptions based solely on what you can obse
         document.getElementById('listing-content').addEventListener('input', function(e) {
             listings[currentPlatform] = e.target.value;
         });
+        
+        // Save current item functionality
+        function saveCurrentItem() {
+            if (!selectedImage || !listings.ebay) {
+                showError('Please generate descriptions first');
+                return;
+            }
+            
+            const itemName = prompt('Enter a name for this item:');
+            if (!itemName) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const savedItem = {
+                    id: Date.now(),
+                    name: itemName,
+                    image: e.target.result,
+                    descriptions: {...listings},
+                    date: new Date().toLocaleDateString()
+                };
+                
+                savedItems.unshift(savedItem);
+                localStorage.setItem('savedItems', JSON.stringify(savedItems));
+                updateSavedItemsList();
+                showSuccess('Item saved! 💾');
+            };
+            reader.readAsDataURL(selectedImage);
+        }
+        
+        // Toggle saved items visibility
+        function toggleSavedItems() {
+            const list = document.getElementById('saved-items-list');
+            if (list.style.display === 'none') {
+                list.style.display = 'block';
+                updateSavedItemsList();
+            } else {
+                list.style.display = 'none';
+            }
+        }
+        
+        // Update saved items list
+        function updateSavedItemsList() {
+            const container = document.getElementById('saved-items-list');
+            if (savedItems.length === 0) {
+                container.innerHTML = '<p style="padding: 1rem; color: #6b7280;">No saved items yet</p>';
+                return;
+            }
+            
+            container.innerHTML = savedItems.map(item => `
+                <div style="border-bottom: 1px solid #e5e7eb; padding: 1rem; display: flex; align-items: center; gap: 1rem;">
+                    <img src="${item.image}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 0.5rem;">
+                    <div style="flex: 1;">
+                        <h4 style="margin: 0; font-size: 0.9rem;">${item.name}</h4>
+                        <p style="margin: 0; color: #6b7280; font-size: 0.8rem;">Saved: ${item.date}</p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button onclick="loadSavedItem(${item.id})" style="background: #3b82f6; color: white; border: none; padding: 0.5rem; border-radius: 0.25rem; font-size: 0.8rem;">Load</button>
+                        <button onclick="deleteSavedItem(${item.id})" style="background: #ef4444; color: white; border: none; padding: 0.5rem; border-radius: 0.25rem; font-size: 0.8rem;">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Load saved item
+        function loadSavedItem(id) {
+            const item = savedItems.find(item => item.id === id);
+            if (!item) return;
+            
+            // Load image
+            const preview = document.getElementById('image-preview');
+            const uploadContent = document.getElementById('upload-content');
+            
+            preview.src = item.image;
+            preview.style.display = 'block';
+            uploadContent.style.display = 'none';
+            
+            // Convert base64 back to file object (simplified)
+            fetch(item.image)
+                .then(res => res.blob())
+                .then(blob => {
+                    selectedImage = new File([blob], 'saved-image.jpg', { type: 'image/jpeg' });
+                });
+            
+            // Load descriptions
+            listings = {...item.descriptions};
+            document.getElementById('listing-content').value = listings[currentPlatform];
+            document.getElementById('copy-btn').disabled = false;
+            document.getElementById('save-btn').disabled = false;
+            document.getElementById('generate-btn').disabled = false;
+            
+            showSuccess(`Loaded: ${item.name}`);
+        }
+        
+        // Delete saved item
+        function deleteSavedItem(id) {
+            if (!confirm('Delete this saved item?')) return;
+            
+            savedItems = savedItems.filter(item => item.id !== id);
+            localStorage.setItem('savedItems', JSON.stringify(savedItems));
+            updateSavedItemsList();
+            showSuccess('Item deleted');
+        }
     </script>
 </body>
 </html>
