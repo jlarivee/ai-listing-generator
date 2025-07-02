@@ -410,8 +410,8 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             // Pre-fill with your API key (base64 encoded for security)
-            const encodedKey = 'c2stYW50LWFwaTAzLVNjNHhFTVRmSFk1aklmVy03MlBKZ3Frd0tkQmlSbXFxbDNma2JETkhhb1JSNkQ2XzFKSzFrNDRhS3V2TnNJQ3o0NHJyZl82V3FRajRySnNPckw1UWZBLTdkVlhvQUFB';
-            const defaultApiKey = atob(encodedKey);
+            const encodedKey = 'c2stYW50LWFwaTAzLVNjNHhFTVRmSFk1akl6VC03MlBKZ3Frd0tkQmlSbXFxbDNma2JETkhhb1JSNkQ2XzFKSzFrNDRhS3V2TnNJQ3o0NHJyZl82V3FRajRySnNPckw1UWZBLTdkVlhvQUFB';
+            const defaultApiKey = atob(encodedKey).trim();
             const savedApiKey = localStorage.getItem('claude_api_key') || defaultApiKey;
             document.getElementById('api-key').value = savedApiKey;
             
@@ -571,6 +571,7 @@ Please provide factual, objective descriptions based solely on what you can obse
                 
                 // Debug: log the raw response  
                 console.log('Claude response:', content);
+                console.log('API Key used:', apiKey.substring(0, 20) + '...');
                 
                 // Parse the new format sections
                 const format1Match = content.match(/\*\*FORMAT 1[^:]*:\*\*(.*?)(?=\*\*FORMAT 2|$)/s);
