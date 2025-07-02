@@ -709,23 +709,15 @@ Provenance Indicators: [Any clues about product history, usage, or origin]
 
 CRITICAL: Examine every pixel. Read every visible character. Identify every logo. Note every detail. Provide comprehensive analysis worthy of a professional appraiser or forensic investigator. The more specific details you can extract, the better!`;
 
-                const response = await fetch('https://api.anthropic.com/v1/messages', {
+                const response = await fetch('/api/generate', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': apiKey,
-                        'anthropic-version': '2023-06-01'
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        model: 'claude-3-sonnet-20240229',
-                        max_tokens: 3000,
-                        messages: [{
-                            role: 'user',
-                            content: imageContent.concat([{
-                                type: 'text',
-                                text: prompt
-                            }])
-                        }]
+                        apiKey: apiKey,
+                        images: imageContent,
+                        prompt: prompt
                     })
                 });
 
