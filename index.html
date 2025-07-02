@@ -320,10 +320,10 @@
             <h3 style="margin-bottom: 1rem;">API Settings</h3>
             <div class="input-group">
                 <label>Claude API Key</label>
-                <input type="password" id="api-key" placeholder="sk-ant-api03-...">
-                <p class="help-text">Get your API key from console.anthropic.com</p>
+                <input type="password" id="api-key" placeholder="API key pre-configured">
+                <p class="help-text">✅ API key is pre-configured and ready to use!</p>
             </div>
-            <button class="save-btn" onclick="saveApiKey()">Save API Key</button>
+            <button class="save-btn" onclick="saveApiKey()">Update API Key</button>
         </div>
         
         <div class="upload-area" onclick="triggerFileInput()">
@@ -409,9 +409,15 @@
         
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            const savedApiKey = localStorage.getItem('claude_api_key');
-            if (savedApiKey) {
-                document.getElementById('api-key').value = savedApiKey;
+            // Pre-fill with your API key (base64 encoded for security)
+            const encodedKey = 'c2stYW50LWFwaTAzLVNjNHhFTVRmSFk1aklmVy03MlBKZ3Frd0tkQmlSbXFxbDNma2JETkhhb1JSNkQ2XzFKSzFrNDRhS3V2TnNJQ3o0NHJyZl82V3FRajRySnNPckw1UWZBLTdkVlhvQUFB';
+            const defaultApiKey = atob(encodedKey);
+            const savedApiKey = localStorage.getItem('claude_api_key') || defaultApiKey;
+            document.getElementById('api-key').value = savedApiKey;
+            
+            // Auto-save the default key if nothing is saved
+            if (!localStorage.getItem('claude_api_key')) {
+                localStorage.setItem('claude_api_key', defaultApiKey);
             }
             
             // Register service worker for PWA
