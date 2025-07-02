@@ -19,51 +19,70 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8fafc;
-            color: #1f2937;
-            line-height: 1.6;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #1a202c;
+            line-height: 1.7;
             -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
         }
         
         .container {
-            max-width: 100%;
-            padding: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
             min-height: 100vh;
         }
         
         .header {
             text-align: center;
-            margin-bottom: 2rem;
-            padding: 1rem 0;
+            margin-bottom: 3rem;
+            padding: 3rem 0 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .header h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 0.5rem;
+            font-size: 3rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            letter-spacing: -0.02em;
         }
         
         .header p {
-            color: #6b7280;
-            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto;
         }
         
         .settings-btn {
             position: fixed;
-            top: 1rem;
-            right: 1rem;
-            background: #f3f4f6;
-            border: none;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 50%;
-            width: 48px;
-            height: 48px;
+            width: 56px;
+            height: 56px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             z-index: 100;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .settings-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
         }
         
         .alert {
@@ -74,31 +93,40 @@
         }
         
         .alert.success {
-            background: #dcfce7;
+            background: rgba(220, 252, 231, 0.95);
+            backdrop-filter: blur(10px);
             color: #166534;
-            border: 1px solid #bbf7d0;
+            border: 1px solid rgba(187, 247, 208, 0.5);
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
         }
         
         .alert.error {
-            background: #fef2f2;
+            background: rgba(254, 242, 242, 0.95);
+            backdrop-filter: blur(10px);
             color: #dc2626;
-            border: 1px solid #fecaca;
+            border: 1px solid rgba(254, 202, 202, 0.5);
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
         }
         
         .settings-panel {
-            background: white;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
             display: none;
         }
         
         .upload-area {
-            background: white;
-            border: 2px dashed #d1d5db;
-            border-radius: 0.75rem;
-            padding: 2rem 1rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 2px dashed rgba(255, 255, 255, 0.4);
+            border-radius: 1.5rem;
+            padding: 3rem 2rem;
             text-align: center;
             margin-bottom: 1.5rem;
             transition: border-color 0.2s;
@@ -129,19 +157,26 @@
         
         .generate-btn {
             width: 100%;
-            background: #16a34a;
+            background: linear-gradient(135deg, #10b981, #059669);
             color: white;
             border: none;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            font-size: 1rem;
-            font-weight: 600;
+            border-radius: 1rem;
+            padding: 1.25rem;
+            font-size: 1.1rem;
+            font-weight: 700;
             margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            transition: background 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+            letter-spacing: 0.02em;
+        }
+        
+        .generate-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
         }
         
         .generate-btn:disabled {
@@ -155,33 +190,39 @@
         
         .tabs {
             display: flex;
-            background: #f3f4f6;
-            border-radius: 0.5rem;
-            padding: 0.25rem;
-            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            padding: 0.375rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .tab {
             flex: 1;
             background: transparent;
             border: none;
-            padding: 0.75rem;
-            border-radius: 0.375rem;
-            font-weight: 500;
-            color: #6b7280;
-            transition: all 0.2s;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
         }
         
         .tab.active {
-            background: #3b82f6;
-            color: white;
+            background: rgba(255, 255, 255, 0.9);
+            color: #1a202c;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
         .listing-container {
-            background: white;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
         }
         
         .listing-header {
@@ -192,15 +233,23 @@
         }
         
         .copy-btn {
-            background: #f3f4f6;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
             border: none;
-            border-radius: 0.375rem;
-            padding: 0.5rem 0.75rem;
-            font-size: 0.875rem;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 0.375rem;
-            color: #374151;
+            gap: 0.5rem;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        
+        .copy-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
         }
         
         .copy-btn:disabled {
@@ -210,13 +259,15 @@
         .listing-content {
             width: 100%;
             min-height: 300px;
-            padding: 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.5rem;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
-            font-size: 0.875rem;
-            line-height: 1.5;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 1rem;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.6;
             resize: vertical;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
         }
         
         .input-group {
@@ -232,10 +283,12 @@
         
         .input-group input {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.5rem;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 0.75rem;
             font-size: 1rem;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
         }
         
         .help-text {
@@ -245,12 +298,19 @@
         }
         
         .save-btn {
-            background: #3b82f6;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             color: white;
             border: none;
-            border-radius: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            font-weight: 500;
+            border-radius: 0.75rem;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .save-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
         }
         
         .spinner {
@@ -398,12 +458,22 @@
         <div class="listing-container" style="margin-top: 1rem;">
             <div class="listing-header">
                 <h3>📁 Saved Items</h3>
-                <button class="copy-btn" onclick="toggleSavedItems()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="6,9 12,15 18,9"></polyline>
-                    </svg>
-                    View
-                </button>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="copy-btn" onclick="exportAllData()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17,10 12,15 7,10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Export
+                    </button>
+                    <button class="copy-btn" onclick="toggleSavedItems()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6,9 12,15 18,9"></polyline>
+                        </svg>
+                        View
+                    </button>
+                </div>
             </div>
             <div id="saved-items-list" style="display: none; max-height: 300px; overflow-y: auto;">
                 <!-- Saved items will be populated here -->
@@ -894,6 +964,36 @@ CRITICAL: Examine every pixel. Read every visible character. Identify every logo
             localStorage.setItem('savedItems', JSON.stringify(savedItems));
             updateSavedItemsList();
             showSuccess('Item deleted');
+        }
+        
+        // Export all saved data
+        function exportAllData() {
+            if (savedItems.length === 0) {
+                showError('No saved items to export');
+                return;
+            }
+            
+            const exportData = {
+                version: '1.0',
+                exportDate: new Date().toISOString(),
+                source: 'AI Listing Generator',
+                itemCount: savedItems.length,
+                items: savedItems
+            };
+            
+            const jsonData = JSON.stringify(exportData, null, 2);
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `listing-generator-export-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showSuccess(`Exported ${savedItems.length} items! Use this file in AI Market Intelligence.`);
         }
     </script>
 </body>
