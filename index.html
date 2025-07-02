@@ -477,7 +477,7 @@
             try {
                 const base64Image = await convertImageToBase64(selectedImage);
                 
-                const prompt = `Analyze this image and create 3 complete marketplace listings:
+                const prompt = `I am the owner of the item shown in this image and want to sell it. Please help me create 3 complete marketplace listings for MY OWN item:
 
 **EBAY LISTING:**
 Title: [Brand] [Model] [Key Feature] - [Condition] (under 80 chars)
@@ -524,7 +524,7 @@ Message if interested! 😊
 
 PRICING: Quick sale $[X], Fair market $[Y], Optimistic $[Z]
 
-Make ready to copy/paste.`;
+This is for selling my own personal item. Make ready to copy/paste.`;
 
                 const response = await fetch('/api/generate', {
                     method: 'POST',
