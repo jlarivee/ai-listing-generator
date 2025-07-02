@@ -366,9 +366,9 @@
         </button>
         
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('ebay')">Professional</button>
-            <button class="tab" onclick="switchTab('craigslist')">Casual</button>
-            <button class="tab" onclick="switchTab('facebook')">Detailed</button>
+            <button class="tab active" onclick="switchTab('ebay')">Detective</button>
+            <button class="tab" onclick="switchTab('craigslist')">Enthusiast</button>
+            <button class="tab" onclick="switchTab('facebook')">Technical</button>
         </div>
         
         <div class="listing-container">
@@ -534,9 +534,9 @@
             
             // Update content
             const titles = {
-                ebay: 'Professional Description',
-                craigslist: 'Casual Description', 
-                facebook: 'Detailed Description'
+                ebay: 'Detective-Level Analysis',
+                craigslist: 'Enthusiast Description', 
+                facebook: 'Technical Specification'
             };
             document.getElementById('platform-title').textContent = titles[platform];
             document.getElementById('listing-content').value = listings[platform];
@@ -583,38 +583,61 @@
                 const imageContent = await Promise.all(imagePromises);
                 
                 const imageCount = selectedImages.length;
-                const prompt = `Please analyze ${imageCount > 1 ? 'these ' + imageCount + ' images' : 'this image'} and provide a detailed product description in three different formats. ${imageCount > 1 ? 'Use all images to get a complete understanding of the item, including different angles, details, and components.' : ''} This is for educational purposes to understand different marketplace communication styles.
+                const prompt = `Please conduct a thorough forensic analysis of ${imageCount > 1 ? 'these ' + imageCount + ' images' : 'this image'} and provide comprehensive product descriptions. ${imageCount > 1 ? 'Examine all images systematically for complete understanding - different angles, close-ups, labels, and components.' : ''} 
 
-**FORMAT 1 - DETAILED PRODUCT DESCRIPTION:**
-Item Name: [Identify the item]
-Brand/Manufacturer: [If visible in any image]
-Condition Assessment: [Based on visual inspection of all images]
-Key Features: [Notable characteristics visible across images]
-Physical Description: [Size, color, materials, details from multiple angles]
-Included Components: [Everything visible across all images]
-Condition Notes: [Any wear, scratches, or imperfections visible in any image]
+INVESTIGATION CHECKLIST - Look carefully for:
+🔍 BRAND IDENTIFICATION: Logos, brand names, manufacturer marks, emblems, wordmarks
+🔍 MODEL/PART NUMBERS: Serial numbers, model codes, part numbers, SKUs, barcodes
+🔍 TEXT & LABELS: Any visible text, stickers, labels, engravings, printed information
+🔍 MATERIALS & CONSTRUCTION: Metal types, plastic grades, fabric composition, build quality
+🔍 DESIGN DETAILS: Unique features, patterns, textures, color variations, finishing
+🔍 CONDITION FORENSICS: Wear patterns, scratches, dents, fading, aging signs
+🔍 SIZE INDICATORS: Relative size clues, scale references, dimensional hints
+🔍 FUNCTIONAL ELEMENTS: Buttons, switches, ports, connectors, moving parts
+🔍 PACKAGING/ACCESSORIES: Original boxes, manuals, cables, extra components
 
-**FORMAT 2 - CASUAL DESCRIPTION:**
-Brief Title: [Item name and condition]
-Personal Note: [As if describing to a friend, mentioning what's shown in the photos]
-Details:
-- [Feature 1 from images]
-- [Feature 2 from images] 
-- [Feature 3 from images]
-- [Condition notes from inspection]
-What's included: [Everything shown in the photos]
+**FORMAT 1 - DETECTIVE-LEVEL DETAILED DESCRIPTION:**
+Item Classification: [Specific item type and category]
+Brand Discovery: [Any logos, brand marks, or manufacturer indicators found - describe location and appearance]
+Model Intelligence: [Model numbers, part codes, or identifying text visible]
+Construction Analysis: [Materials, build quality, manufacturing details]
+Design Characteristics: [Unique features, styling elements, color schemes, patterns]
+Dimensional Assessment: [Size estimates based on visual cues and proportions]
+Condition Investigation: [Detailed wear analysis, age indicators, damage assessment]
+Component Inventory: [Complete list of all visible parts, accessories, included items]
+Text/Label Findings: [All readable text, labels, stickers, engravings transcribed]
+Authentication Markers: [Any authenticity indicators, holograms, or verification marks]
 
-**FORMAT 3 - PROFESSIONAL DESCRIPTION:**
-Product Title: [Formal product name]
-Specification Summary:
-✓ [Key specification 1 from images]
-✓ [Key specification 2 from images]
-✓ [Key specification 3 from images]
-Condition: [Professional assessment based on all images]
-Package Contents: [Complete inventory from all photos]
-Additional Notes: [Any relevant details visible in the images]
+**FORMAT 2 - ENTHUSIAST DESCRIPTION:**
+What I'm Selling: [Conversational but thorough item identification]
+Brand Story: [Brand background if identifiable, what makes this special]
+The Details That Matter: 
+- [Specific feature/detail with explanation]
+- [Build quality or material highlight]
+- [Condition specifics with honest assessment]
+- [Functionality notes based on visual inspection]
+- [Any collector/enthusiast value points]
+Complete Package: [Everything included based on photos]
+Condition Reality Check: [Honest condition notes, what to expect]
+Why This One's Good: [Selling points based on visual evidence]
 
-Please provide factual, objective descriptions based solely on what you can observe across all the provided images.`;
+**FORMAT 3 - TECHNICAL SPECIFICATION SHEET:**
+Product Designation: [Official or inferred product name]
+Manufacturer Intelligence: [Brand identification and background]
+Technical Specifications:
+✓ [Construction material and quality grade]
+✓ [Design generation or version if determinable]
+✓ [Key technical features visible]
+✓ [Compatibility or interface details]
+✓ [Performance indicators from visual inspection]
+Physical Characteristics: [Exact visual measurements, weight estimation, form factor]
+Condition Grade: [Professional condition assessment with specific criteria]
+Completeness Analysis: [Inventory against standard product configuration]
+Market Positioning: [Product tier/category based on visible quality indicators]
+Documentation: [Any manuals, labels, or documentation visible]
+Provenance Indicators: [Any clues about product history, usage, or origin]
+
+CRITICAL: Examine every pixel. Read every visible character. Identify every logo. Note every detail. Provide comprehensive analysis worthy of a professional appraiser or forensic investigator. The more specific details you can extract, the better!`;
 
                 const response = await fetch('/api/generate', {
                     method: 'POST',
@@ -646,9 +669,9 @@ Please provide factual, objective descriptions based solely on what you can obse
                 const format3Match = content.match(/\*\*FORMAT 3[^:]*:\*\*(.*?)$/s);
                 
                 listings = {
-                    ebay: format3Match ? format3Match[1].trim() : (content.includes('FORMAT 3') ? content : 'Professional description not found'),
-                    craigslist: format2Match ? format2Match[1].trim() : (content.includes('FORMAT 2') ? content : 'Casual description not found'),
-                    facebook: format1Match ? format1Match[1].trim() : (content.includes('FORMAT 1') ? content : 'Detailed description not found')
+                    ebay: format1Match ? format1Match[1].trim() : (content.includes('FORMAT 1') ? content : 'Detective analysis not found'),
+                    craigslist: format2Match ? format2Match[1].trim() : (content.includes('FORMAT 2') ? content : 'Enthusiast description not found'),
+                    facebook: format3Match ? format3Match[1].trim() : (content.includes('FORMAT 3') ? content : 'Technical specification not found')
                 };
                 
                 // Update current view
