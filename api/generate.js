@@ -13,10 +13,31 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { apiKey, image, prompt } = req.body;
+    const { apiKey, images, image, prompt } = req.body;
 
-    if (!apiKey || !image || !prompt) {
+    if (!apiKey || (!images && !image) || !prompt) {
       return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Handle both single image (legacy) and multiple images
+    let messageContent = [];
+    
+    if (images && Array.isArray(images)) {
+      // Multiple images
+      messageContent = [...images, { type: 'text', text: prompt }];
+    } else if (image) {
+      // Single image (legacy support)
+      messageContent = [{
+        type: 'image',
+        source: {
+          type: 'base64',
+          media_type: image.type,
+          data: image.data
+        }
+      }, {
+        type: 'text',
+        text: prompt
+      }];
     }
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -31,17 +52,7 @@ export default async function handler(req, res) {
         max_tokens: 3000,
         messages: [{
           role: 'user',
-          content: [{
-            type: 'image',
-            source: {
-              type: 'base64',
-              media_type: image.type,
-              data: image.data
-            }
-          }, {
-            type: 'text',
-            text: prompt
-          }]
+          content: messageContent
         }]
       })
     });
